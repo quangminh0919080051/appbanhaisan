@@ -7,6 +7,8 @@ import 'screens/favorite_page.dart';
 import 'screens/category_page.dart';
 import 'screens/notification_page.dart';
 import 'screens/profile_page.dart';
+import 'screens/admin_page.dart';
+import 'screens/product_detail_page.dart';
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -19,20 +21,23 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const HomePage());
       case '/cart':
         return MaterialPageRoute(builder: (_) => const CartPage());
-      case '/category':
-        return MaterialPageRoute(builder: (_) => const CategoryPage());
-      case '/favorite':
-        return MaterialPageRoute(builder: (_) => const FavoritePage());
-      case '/notification':
-        return MaterialPageRoute(builder: (_) => const NotificationPage());
-      case '/profile':
-        return MaterialPageRoute(builder: (_) => const ProfilePage());
+      case '/product-detail':
+        final args = settings.arguments as Map<String, dynamic>;
+        return MaterialPageRoute(
+          builder: (_) => ProductDetailPage(
+            id: args['id'],
+            name: args['name'],
+            price: args['price'],
+            category: args['category'],
+            imageNumber: args['imageNumber'],
+          ),
+        );
+      case '/admin':
+        return MaterialPageRoute(builder: (_) => const AdminPage());
       default:
         return MaterialPageRoute(
-          builder: (_) => Scaffold(
-            body: Center(
-              child: Text('Không tìm thấy trang: ${settings.name}'),
-            ),
+          builder: (_) => const Scaffold(
+            body: Center(child: Text('Route not found')),
           ),
         );
     }
