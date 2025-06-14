@@ -15,7 +15,7 @@ class _AdminPageState extends State<AdminPage> {
     const ProductManagement(),
     const OrderManagement(),
     const UserManagement(),
-    const AdminProfile(), // Thêm trang profile
+    const AdminProfile(),
   ];
 
   @override
@@ -26,7 +26,13 @@ class _AdminPageState extends State<AdminPage> {
         backgroundColor: const Color(0xFFFF385C),
       ),
       drawer: _buildAdminDrawer(context),
-      body: _adminPages[_selectedIndex],
+      // Wrap the body in SafeArea to avoid system UI overlaps
+      body: SafeArea(
+        child: IndexedStack(
+          index: _selectedIndex,
+          children: _adminPages,
+        ),
+      ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         selectedItemColor: const Color(0xFFFF385C),
@@ -366,45 +372,88 @@ class AdminProfile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
+    return ListView( // Thay SingleChildScrollView bằng ListView
       padding: const EdgeInsets.all(16),
-      child: Column(
-        children: [
-          const CircleAvatar(
-            radius: 50,
-            backgroundColor: Color(0xFFFF385C),
-            child: Icon(
-              Icons.admin_panel_settings,
-              size: 50,
-              color: Colors.white,
-            ),
+      children: [
+        // Phần header profile
+        Center(
+          child: Column(
+            children: [
+              const CircleAvatar(
+                radius: 50,
+                backgroundColor: Color(0xFFFF385C),
+                child: Icon(
+                  Icons.admin_panel_settings,
+                  size: 50,
+                  color: Colors.white,
+                ),
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'Admin',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const Text('admin@gmail.com'),
+              const SizedBox(height: 32),
+            ],
           ),
-          const SizedBox(height: 16),
-          const Text(
-            'Admin',
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const Text('admin@gmail.com'),
-          const SizedBox(height: 32),
-          _buildProfileSection('Thông tin cá nhân'),
-          _buildProfileSection('Cài đặt tài khoản'),
-          _buildProfileSection('Bảo mật'),
-        ],
-      ),
+        ),
+
+        // Phần menu items
+        _buildMenuItem(
+          Icons.person_outline,
+          'Thông tin cá nhân',
+          onTap: () {},
+        ),
+        _buildMenuItem(
+          Icons.security,
+          'Bảo mật tài khoản',
+          onTap: () {},
+        ),
+        const Divider(),
+        _buildMenuItem(
+          Icons.settings,
+          'Cài đặt hệ thống',
+          onTap: () {},
+        ),
+        _buildMenuItem(
+          Icons.help_outline,
+          'Trợ giúp & Hỗ trợ',
+          onTap: () {},
+        ),
+        const Divider(),
+        _buildMenuItem(
+          Icons.logout,
+          'Đăng xuất',
+          color: const Color(0xFFFF385C),
+          onTap: () {
+            Navigator.pushReplacementNamed(context, '/login');
+          },
+        ),
+      ],
     );
   }
 
-  Widget _buildProfileSection(String title) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 16),
-      child: ListTile(
-        title: Text(title),
-        trailing: const Icon(Icons.arrow_forward_ios),
-        onTap: () {},
+  Widget _buildMenuItem(
+    IconData icon,
+    String title, {
+    Color? color,
+    VoidCallback? onTap,
+  }) {
+    return ListTile(
+      leading: Icon(icon, color: color),
+      title: Text(
+        title,
+        style: TextStyle(
+          color: color,
+          fontSize: 16,
+        ),
       ),
+      trailing: const Icon(Icons.chevron_right),
+      onTap: onTap,
     );
   }
 }

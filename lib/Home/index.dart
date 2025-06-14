@@ -4,6 +4,7 @@ import '../screens/cart_page.dart';
 import '../screens/favorite_page.dart';
 import '../screens/notification_page.dart';
 import '../screens/profile_page.dart';
+import '../screens/chat_widget.dart';
 
 class Product {
   final String id;
@@ -147,6 +148,49 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
+      floatingActionButton: Stack(
+        children: [
+          FloatingActionButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ChatWidget(),
+                ),
+              );
+            },
+            backgroundColor: const Color(0xFFFF385C),
+            child: const Icon(Icons.chat, color: Colors.white),
+          ),
+          Positioned(
+            right: 0,
+            top: 0,
+            child: Container(
+              padding: const EdgeInsets.all(2),
+              decoration: BoxDecoration(
+                color: Colors.red,
+                borderRadius: BorderRadius.circular(6),
+              ),
+              constraints: const BoxConstraints(
+                minWidth: 14,
+                minHeight: 14,
+              ),
+              child: Center(
+                child: Text(
+                  '1',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 
@@ -321,16 +365,18 @@ class HomeContent extends StatelessWidget {
           color: const Color(0xFFFF385C),
         ),
         child: Stack(
+          fit: StackFit.expand, // Add this to ensure Stack fills container
           children: [
-            Positioned(
-              right: 0,
-              bottom: 0,
-              top: 0,
-              child: Image.asset(
-                'assets/images/hero_image.jpg',
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) =>
-                    Container(color: Colors.grey[300]),
+            ClipRRect( // Wrap image in ClipRRect
+              borderRadius: BorderRadius.circular(16),
+              child: Align( // Use Align instead of Positioned
+                alignment: Alignment.centerRight,
+                child: Image.asset(
+                  'assets/images/hero_image.jpg',
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) =>
+                      Container(color: Colors.grey[300]),
+                ),
               ),
             ),
             Padding(
@@ -343,7 +389,7 @@ class HomeContent extends StatelessWidget {
                     'Ưu đãi mùa hè',
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: 28,
+                      fontSize: 24, // Reduced font size
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -352,21 +398,24 @@ class HomeContent extends StatelessWidget {
                     'Giảm giá đến 30%',
                     style: TextStyle(
                       color: Colors.white.withOpacity(0.9),
-                      fontSize: 18,
+                      fontSize: 16, // Reduced font size
                     ),
                   ),
                   const SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: const Color(0xFFFF385C),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 24,
-                        vertical: 12,
+                  SizedBox( // Wrap button in SizedBox to control height
+                    height: 40,
+                    child: ElevatedButton(
+                      onPressed: () {},
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: const Color(0xFFFF385C),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 24,
+                          vertical: 8, // Reduced padding
+                        ),
                       ),
+                      child: const Text('Xem ngay'),
                     ),
-                    child: const Text('Xem ngay'),
                   ),
                 ],
               ),
@@ -434,18 +483,10 @@ class HomeContent extends StatelessWidget {
   }
 
   Widget _buildProductCard(Product product, BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
+    return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            spreadRadius: 1,
-            blurRadius: 5,
-            offset: const Offset(0, 2),
-          ),
-        ],
       ),
       child: InkWell(
         onTap: () {
@@ -464,39 +505,70 @@ class HomeContent extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            AspectRatio(
-              aspectRatio: 1,
-              child: Image.asset(
-                'assets/images/${product.imageNumber}.jpg',
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) =>
-                    Container(color: Colors.grey[200]),
+            Expanded(
+              flex: 3,
+              child: ClipRRect(
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                child: Image.asset(
+                  'assets/images/${product.imageNumber}.jpg',
+                  fit: BoxFit.cover,
+                  width: double.infinity,
+                  errorBuilder: (context, error, stackTrace) =>
+                      Container(
+                        color: Colors.grey[200],
+                        child: const Icon(Icons.image, size: 50),
+                      ),
+                ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(8),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    product.name,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
+            Expanded(
+              flex: 2,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      product.name,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    product.price,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      color: Color(0xFFFF385C),
-                      fontWeight: FontWeight.bold,
+                    const SizedBox(height: 4),
+                    Text(
+                      product.price,
+                      style: const TextStyle(
+                        fontSize: 13,
+                        color: Color(0xFFFF385C),
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                ],
+                    if (product.isNew) ...[
+                      const SizedBox(height: 4),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFFF385C).withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: const Text(
+                          'Mới',
+                          style: TextStyle(
+                            color: Color(0xFFFF385C),
+                            fontSize: 10,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
               ),
             ),
           ],
@@ -505,15 +577,16 @@ class HomeContent extends StatelessWidget {
     );
   }
 
+  // Update the grid delegate to use a fixed aspect ratio
   Widget _buildProductGrid() {
     return SliverPadding(
       padding: const EdgeInsets.all(16),
       sliver: SliverGrid(
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
-          childAspectRatio: 0.75,
-          crossAxisSpacing: 12,
-          mainAxisSpacing: 12,
+          childAspectRatio: 0.7, // Adjust this value to control card height
+          mainAxisSpacing: 16,
+          crossAxisSpacing: 16,
         ),
         delegate: SliverChildBuilderDelegate(
           (context, index) => _buildProductCard(productList[index], context),
