@@ -26,10 +26,6 @@ class RouteGenerator {
         return MaterialPageRoute(
           builder: (_) => ProductDetailPage(
             id: args['id'],
-            name: args['name'],
-            price: args['price'],
-            category: args['category'],
-            imageNumber: args['imageNumber'],
           ),
         );
       case '/admin':
