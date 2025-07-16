@@ -1,3 +1,4 @@
+// lib/auth/login_page.dart
 import 'package:flutter/material.dart';
 import '../services/auth_service.dart';
 
@@ -15,6 +16,13 @@ class _LoginPageState extends State<LoginPage> {
   bool _isLoading = false;
 
   @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
@@ -26,7 +34,6 @@ class _LoginPageState extends State<LoginPage> {
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 20),
-            // Form đăng nhập
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 40),
               child: Form(
@@ -106,7 +113,7 @@ class _LoginPageState extends State<LoginPage> {
         if (!mounted) return;
 
         if (result['success']) {
-          print('Login successful as: ${result['role']}'); // Debug print
+          print('Login successful as: ${result['role']}');
           
           if (result['role'] == 'admin') {
             Navigator.of(context).pushReplacementNamed('/admin');
@@ -115,8 +122,8 @@ class _LoginPageState extends State<LoginPage> {
           }
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Email hoặc mật khẩu không đúng!'),
+            SnackBar(
+              content: Text(result['message'] ?? 'Đăng nhập thất bại.'),
               backgroundColor: Colors.red,
             ),
           );
